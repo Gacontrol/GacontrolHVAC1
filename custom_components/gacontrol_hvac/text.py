@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from homeassistant.components.text import TextEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -111,7 +112,7 @@ class EntityLinkText(CoordinatorEntity, TextEntity):
         self._entry = entry
         self._attr_unique_id = f"{entry.entry_id}_{link_key}"
         self._attr_name = f"{heating_group.name} {name}"
-        self._attr_entity_category = "config"
+        self._attr_entity_category = EntityCategory.CONFIG
         self._description = description
         self._attr_device_info = {
             "identifiers": {(DOMAIN, entry.entry_id)},

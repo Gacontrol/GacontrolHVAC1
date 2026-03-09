@@ -71,45 +71,7 @@ async def _register_frontend_resources(hass: HomeAssistant) -> None:
         _LOGGER.warning("www directory not found at %s", www_dir)
         return
 
-    card_url = "/gacontrol_hvac/gacontrol-heating-group-card.js"
-
-    try:
-        from homeassistant.components.http.static import StaticPathConfig
-
-        await hass.http.async_register_static_paths([
-            StaticPathConfig(
-                url_path="/gacontrol_hvac",
-                path=str(www_dir),
-                cache_headers=False,
-            )
-        ])
-    except (ImportError, AttributeError):
-        try:
-            hass.http.register_static_path(
-                "/gacontrol_hvac",
-                str(www_dir),
-                cache_headers=False,
-            )
-        except Exception as err:
-            _LOGGER.warning(
-                "Could not register static path: %s. Please add the card manually.", err
-            )
-            return
-
-    try:
-        from homeassistant.components.lovelace.resources import ResourceStorageCollection
-
-        if "lovelace" in hass.data:
-            resources = hass.data["lovelace"].get("resources")
-            if resources and isinstance(resources, ResourceStorageCollection):
-                existing = [r for r in resources.async_items() if card_url in r.get("url", "")]
-                if not existing:
-                    await resources.async_create_item({
-                        "url": card_url,
-                        "res_type": "module",
-                    })
-                    _LOGGER.info("Auto-registered GAControl card as Lovelace resource")
-    except Exception as err:
-        _LOGGER.debug("Could not auto-register Lovelace resource: %s", err)
-
-    _LOGGER.info("Registered GAControl Heating Group Card at %s", card_url)
+    _LOGGER.info(
+        "GAControl card available. Add manually: /local/community/gacontrol_hvac/gacontrol-heating-group-card.js "
+        "or copy www/*.js to /config/www/ and use /local/gacontrol-heating-group-card.js"
+    )
