@@ -64,6 +64,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def _register_frontend_resources(hass: HomeAssistant) -> None:
     """Register frontend resources for the custom card."""
+    from homeassistant.components.http.static import StaticPathConfig
+
     integration_dir = Path(__file__).parent
     www_dir = integration_dir / "www"
 
@@ -73,10 +75,12 @@ async def _register_frontend_resources(hass: HomeAssistant) -> None:
 
     card_url = f"/gacontrol_hvac/gacontrol-heating-group-card.js"
 
-    hass.http.register_static_path(
-        "/gacontrol_hvac",
-        str(www_dir),
-        cache_headers=False,
-    )
+    await hass.http.async_register_static_paths([
+        StaticPathConfig(
+            url_path="/gacontrol_hvac",
+            path=str(www_dir),
+            cache_headers=False,
+        )
+    ])
 
     _LOGGER.info("Registered GAControl Heating Group Card at %s", card_url)
