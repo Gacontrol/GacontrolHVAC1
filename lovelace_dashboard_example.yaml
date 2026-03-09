@@ -1,0 +1,524 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Gacontrol HVAC - Vollständiges Dashboard
+# ═══════════════════════════════════════════════════════════════════════════════
+# Professionelle Heizgruppen-Visualisierung mit allen Parametern, Sensoren und Ausgängen
+#
+# Installation:
+# 1. Navigieren Sie zu Ihrem Home Assistant Dashboard
+# 2. Klicken Sie auf "Bearbeiten" (Stift-Symbol oben rechts)
+# 3. Klicken Sie auf "+ Karte hinzufügen"
+# 4. Wählen Sie "Manuell" und kopieren Sie diese gesamte Konfiguration
+# 5. Passen Sie "heizgruppe_1" an Ihre tatsächliche Heizgruppen-ID an
+#
+# Hinweis: Einige Karten verwenden Custom Components:
+# - custom:bar-card (für Ventilposition) - Installation via HACS empfohlen
+# - custom:apexcharts-card (für Diagramme) - Installation via HACS empfohlen
+# ═══════════════════════════════════════════════════════════════════════════════
+
+type: vertical-stack
+cards:
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # HAUPT-STEUERUNG
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Heizgruppe 1 - Steuerung
+    subtitle: Hauptsteuerung und Übersicht
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-climate-card
+        entity: climate.heizgruppe_1
+        name: Heizgruppe 1
+        icon: mdi:heating-coil
+        fill_container: true
+        show_temperature_control: true
+        hvac_modes:
+          - heat
+          - 'off'
+        tap_action:
+          action: more-info
+
+      - type: custom:mushroom-select-card
+        entity: select.heizgruppe_1_betriebsmodus
+        name: Betriebsmodus
+        icon: mdi:cog
+        fill_container: true
+        secondary_info: state
+
+      - type: custom:mushroom-entity-card
+        entity: switch.heizgruppe_1_freigabe
+        name: Freigabe
+        icon: mdi:power
+        fill_container: true
+        tap_action:
+          action: toggle
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # STATUS-ÜBERSICHT
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: binary_sensor.heizgruppe_1_stoerung
+        name: Störung
+        icon: mdi:alert-circle
+        fill_container: true
+        card_mod:
+          style: |
+            ha-card {
+              {% if is_state('binary_sensor.heizgruppe_1_stoerung', 'on') %}
+              background-color: rgba(244, 67, 54, 0.1);
+              {% endif %}
+            }
+
+      - type: custom:mushroom-entity-card
+        entity: binary_sensor.heizgruppe_1_sicherheitstemperaturbegrenzer
+        name: STB
+        icon: mdi:shield-alert
+        fill_container: true
+        card_mod:
+          style: |
+            ha-card {
+              {% if is_state('binary_sensor.heizgruppe_1_sicherheitstemperaturbegrenzer', 'on') %}
+              background-color: rgba(255, 152, 0, 0.1);
+              {% endif %}
+            }
+
+      - type: custom:mushroom-entity-card
+        entity: binary_sensor.heizgruppe_1_pumpe_laeuft
+        name: Pumpe aktiv
+        icon: mdi:pump
+        fill_container: true
+        card_mod:
+          style: |
+            ha-card {
+              {% if is_state('binary_sensor.heizgruppe_1_pumpe_laeuft', 'on') %}
+              background-color: rgba(76, 175, 80, 0.1);
+              {% endif %}
+            }
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # TEMPERATUR-ÜBERSICHT
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Temperaturen
+    subtitle: Aktuelle Messwerte und Sollwerte
+
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: sensor.heizgruppe_1_vorlauftemperatur
+        name: Vorlauf Ist
+        icon: mdi:thermometer
+        icon_color: red
+        primary_info: name
+        secondary_info: state
+
+      - type: custom:mushroom-entity-card
+        entity: sensor.heizgruppe_1_vorlauf_sollwert
+        name: Vorlauf Soll
+        icon: mdi:thermometer-check
+        icon_color: orange
+        primary_info: name
+        secondary_info: state
+
+      - type: custom:mushroom-entity-card
+        entity: sensor.heizgruppe_1_ruecklauftemperatur
+        name: Rücklauf
+        icon: mdi:thermometer-chevron-down
+        icon_color: blue
+        primary_info: name
+        secondary_info: state
+
+      - type: custom:mushroom-entity-card
+        entity: sensor.heizgruppe_1_aussentemperatur
+        name: Außentemperatur
+        icon: mdi:home-thermometer-outline
+        icon_color: green
+        primary_info: name
+        secondary_info: state
+
+      - type: custom:mushroom-entity-card
+        entity: sensor.heizgruppe_1_aussentemperatur_gemittelt
+        name: Außen (24h Ø)
+        icon: mdi:chart-line
+        icon_color: teal
+        primary_info: name
+        secondary_info: state
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # TEMPERATUR-DIAGRAMM
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:apexcharts-card
+    graph_span: 24h
+    header:
+      show: true
+      title: Temperaturverlauf (24 Stunden)
+      show_states: true
+      colorize_states: true
+    now:
+      show: true
+      label: Jetzt
+    span:
+      start: day
+    series:
+      - entity: sensor.heizgruppe_1_vorlauftemperatur
+        name: Vorlauf Ist
+        color: '#f44336'
+        stroke_width: 3
+        extend_to: false
+        group_by:
+          func: avg
+          duration: 5min
+
+      - entity: sensor.heizgruppe_1_vorlauf_sollwert
+        name: Vorlauf Soll
+        color: '#ff9800'
+        stroke_width: 2
+        curve: stepline
+        extend_to: false
+        group_by:
+          func: avg
+          duration: 5min
+
+      - entity: sensor.heizgruppe_1_ruecklauftemperatur
+        name: Rücklauf
+        color: '#2196f3'
+        stroke_width: 2
+        extend_to: false
+        group_by:
+          func: avg
+          duration: 5min
+
+      - entity: sensor.heizgruppe_1_aussentemperatur
+        name: Außentemperatur
+        color: '#4caf50'
+        stroke_width: 2
+        extend_to: false
+        group_by:
+          func: avg
+          duration: 5min
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # MISCHVENTIL
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Mischventil
+    subtitle: Position und Steuerung
+
+  - type: custom:bar-card
+    entity: sensor.heizgruppe_1_mischventil_position
+    name: Ventilposition
+    unit_of_measurement: "%"
+    icon: mdi:valve
+    min: 0
+    max: 100
+    height: 50px
+    positions:
+      icon: outside
+      indicator: inside
+      name: inside
+      value: inside
+    severity:
+      - from: 0
+        to: 25
+        color: '#2196f3'
+      - from: 25
+        to: 50
+        color: '#4caf50'
+      - from: 50
+        to: 75
+        color: '#ff9800'
+      - from: 75
+        to: 100
+        color: '#f44336'
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # REGLER-STATUS
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Regler-Status
+    subtitle: PI-Regler Ausgänge und Abweichungen
+
+  - type: entities
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 12px;
+        }
+    entities:
+      - entity: sensor.heizgruppe_1_regelabweichung
+        name: Regelabweichung
+        icon: mdi:delta
+        secondary_info: last-changed
+
+      - entity: sensor.heizgruppe_1_reglerausgang
+        name: Reglerausgang
+        icon: mdi:gauge
+        secondary_info: last-changed
+
+      - type: divider
+
+      - entity: number.heizgruppe_1_p_anteil
+        name: P-Anteil (Proportional)
+        icon: mdi:alpha-p-circle
+
+      - entity: number.heizgruppe_1_i_anteil
+        name: I-Anteil (Integral)
+        icon: mdi:alpha-i-circle
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # HEIZKENNLINIE
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Heizkennlinie
+    subtitle: Temperatur-Parameter und Schwellwerte
+
+  - type: entities
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 12px;
+        }
+    entities:
+      - entity: number.heizgruppe_1_min_vorlauftemperatur
+        name: Minimale Vorlauftemperatur
+        icon: mdi:thermometer-low
+
+      - entity: number.heizgruppe_1_max_vorlauftemperatur
+        name: Maximale Vorlauftemperatur
+        icon: mdi:thermometer-high
+
+      - type: divider
+
+      - entity: number.heizgruppe_1_einschalttemperatur
+        name: Einschalttemperatur (Außen)
+        icon: mdi:thermometer-plus
+
+      - entity: number.heizgruppe_1_ausschalttemperatur
+        name: Ausschalttemperatur (Außen)
+        icon: mdi:thermometer-minus
+
+      - type: divider
+
+      - entity: number.heizgruppe_1_mittelungszeit
+        name: Mittelungszeit Außentemperatur
+        icon: mdi:clock-outline
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PUMPEN-STEUERUNG
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Pumpen-Steuerung
+    subtitle: Status, Befehle und Störungen
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: binary_sensor.heizgruppe_1_pumpe_befehl
+        name: Pumpenbefehl
+        icon: mdi:pump
+        fill_container: true
+        card_mod:
+          style: |
+            ha-card {
+              {% if is_state('binary_sensor.heizgruppe_1_pumpe_befehl', 'on') %}
+              background-color: rgba(76, 175, 80, 0.1);
+              {% endif %}
+            }
+
+      - type: custom:mushroom-entity-card
+        entity: binary_sensor.heizgruppe_1_pumpe_laeuft
+        name: Pumpe läuft
+        icon: mdi:pump-off
+        fill_container: true
+        card_mod:
+          style: |
+            ha-card {
+              {% if is_state('binary_sensor.heizgruppe_1_pumpe_laeuft', 'on') %}
+              background-color: rgba(33, 150, 243, 0.1);
+              {% endif %}
+            }
+
+      - type: custom:mushroom-entity-card
+        entity: binary_sensor.heizgruppe_1_pumpe_stoerung
+        name: Störung
+        icon: mdi:alert
+        fill_container: true
+        card_mod:
+          style: |
+            ha-card {
+              {% if is_state('binary_sensor.heizgruppe_1_pumpe_stoerung', 'on') %}
+              background-color: rgba(244, 67, 54, 0.1);
+              {% endif %}
+            }
+
+  - type: entities
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 12px;
+        }
+    entities:
+      - entity: number.heizgruppe_1_pumpen_start_verzoegerung
+        name: Pumpen-Startverzögerung
+        icon: mdi:timer
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # AUSGÄNGE (iSMA INTEGRATION)
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Digitale Ausgänge
+    subtitle: Verknüpfung mit iSMA Controller Ausgängen
+
+  - type: entities
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 12px;
+          background-color: rgba(33, 150, 243, 0.05);
+        }
+    entities:
+      - type: section
+        label: Pumpen-Ausgang
+
+      - entity: text.heizgruppe_1_pumpen_ausgang_entity
+        name: Entity ID für Pumpenausgang
+        icon: mdi:electric-switch
+
+      - type: section
+        label: Mischventil-Ausgänge
+
+      - entity: text.heizgruppe_1_ventil_auf_ausgang_entity
+        name: Entity ID für Ventil AUF
+        icon: mdi:arrow-up-bold
+
+      - entity: text.heizgruppe_1_ventil_zu_ausgang_entity
+        name: Entity ID für Ventil ZU
+        icon: mdi:arrow-down-bold
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SENSOREN-VERKNÜPFUNG (iSMA INTEGRATION)
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Sensor-Verknüpfungen
+    subtitle: Verbindung zu externen Temperatursensoren und Rückmeldungen
+
+  - type: entities
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 12px;
+          background-color: rgba(76, 175, 80, 0.05);
+        }
+    entities:
+      - type: section
+        label: Temperatursensoren
+
+      - entity: text.heizgruppe_1_vorlauftemperatur_entity
+        name: Vorlauftemperatur Sensor
+        icon: mdi:thermometer
+
+      - entity: text.heizgruppe_1_ruecklauftemperatur_entity
+        name: Rücklauftemperatur Sensor
+        icon: mdi:thermometer-chevron-down
+
+      - entity: text.heizgruppe_1_aussentemperatur_entity
+        name: Außentemperatur Sensor
+        icon: mdi:home-thermometer-outline
+
+      - type: section
+        label: Rückmeldungen
+
+      - entity: text.heizgruppe_1_pumpen_rueckmeldung_entity
+        name: Pumpen-Rückmeldung
+        icon: mdi:pump
+
+      - entity: text.heizgruppe_1_pumpenstoerung_entity
+        name: Pumpenstörungs-Signal
+        icon: mdi:alert-circle
+
+      - entity: text.heizgruppe_1_sicherheitstemperaturbegrenzer_entity
+        name: STB Signal (Sicherheitstemperaturbegrenzer)
+        icon: mdi:shield-alert
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # MANUELLE TEMPERATUR-EINGABEN
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Manuelle Temperatur-Eingaben
+    subtitle: Für Tests ohne externe Sensoren (nur wenn keine Entity verknüpft)
+
+  - type: entities
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: 12px;
+          background-color: rgba(255, 152, 0, 0.05);
+        }
+    entities:
+      - entity: number.heizgruppe_1_vorlauftemperatur_eingabe
+        name: Vorlauf manuell
+        icon: mdi:thermometer-lines
+
+      - entity: number.heizgruppe_1_ruecklauftemperatur_eingabe
+        name: Rücklauf manuell
+        icon: mdi:thermometer-lines
+
+      - entity: number.heizgruppe_1_aussentemperatur_eingabe
+        name: Außentemperatur manuell
+        icon: mdi:thermometer-lines
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # DIAGNOSE & STATISTIK
+  # ═══════════════════════════════════════════════════════════════════════════════
+
+  - type: custom:mushroom-title-card
+    title: Diagnose & Statistik
+    subtitle: Historische Daten und Auswertungen
+
+  - type: history-graph
+    title: Ventilposition (24h)
+    hours_to_show: 24
+    entities:
+      - entity: sensor.heizgruppe_1_mischventil_position
+
+  - type: history-graph
+    title: Pumpen-Status (24h)
+    hours_to_show: 24
+    entities:
+      - entity: binary_sensor.heizgruppe_1_pumpe_befehl
+      - entity: binary_sensor.heizgruppe_1_pumpe_laeuft
+      - entity: binary_sensor.heizgruppe_1_pumpe_stoerung
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENDE DER DASHBOARD-KONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Weitere Anpassungen:
+# - Ersetzen Sie "heizgruppe_1" mit Ihrer tatsächlichen Heizgruppen-ID
+# - Passen Sie Farben und Schwellwerte nach Bedarf an
+# - Installieren Sie empfohlene Custom Cards via HACS:
+#   * mushroom-cards (für moderne UI)
+#   * bar-card (für Ventilposition)
+#   * apexcharts-card (für erweiterte Diagramme)
+# ═══════════════════════════════════════════════════════════════════════════════

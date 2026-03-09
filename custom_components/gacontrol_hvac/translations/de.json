@@ -1,0 +1,39 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gacontrol HVAC konfigurieren",
+        "description": "Konfigurieren Sie Ihre Heizgruppe",
+        "data": {
+          "name": "Name",
+          "min_supply_temp": "Min. Vorlauftemperatur (°C)",
+          "max_supply_temp": "Max. Vorlauftemperatur (°C)",
+          "outside_temp_on": "Einschalttemperatur (°C)",
+          "outside_temp_off": "Ausschalttemperatur (°C)",
+          "temp_averaging_hours": "Mittelungszeit (h)",
+          "p_gain": "P-Anteil",
+          "i_gain": "I-Anteil",
+          "pump_start_delay": "Pumpen Start Verzögerung (s)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Gacontrol HVAC Optionen",
+        "description": "Parameter anpassen",
+        "data": {
+          "min_supply_temp": "Min. Vorlauftemperatur (°C)",
+          "max_supply_temp": "Max. Vorlauftemperatur (°C)",
+          "outside_temp_on": "Einschalttemperatur (°C)",
+          "outside_temp_off": "Ausschalttemperatur (°C)",
+          "temp_averaging_hours": "Mittelungszeit (h)",
+          "p_gain": "P-Anteil",
+          "i_gain": "I-Anteil",
+          "pump_start_delay": "Pumpen Start Verzögerung (s)"
+        }
+      }
+    }
+  }
+}

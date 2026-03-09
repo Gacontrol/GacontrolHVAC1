@@ -1,0 +1,166 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gacontrol HVAC konfigurieren",
+        "description": "Konfigurieren Sie Ihre Heizgruppe",
+        "data": {
+          "name": "Name",
+          "min_supply_temp": "Min. Vorlauftemperatur (°C)",
+          "max_supply_temp": "Max. Vorlauftemperatur (°C)",
+          "outside_temp_on": "Einschalttemperatur (°C)",
+          "outside_temp_off": "Ausschalttemperatur (°C)",
+          "temp_averaging_hours": "Mittelungszeit (h)",
+          "p_gain": "P-Anteil",
+          "i_gain": "I-Anteil",
+          "pump_start_delay": "Pumpen Start Verzögerung (s)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Gacontrol HVAC Optionen",
+        "description": "Parameter anpassen",
+        "data": {
+          "min_supply_temp": "Min. Vorlauftemperatur (°C)",
+          "max_supply_temp": "Max. Vorlauftemperatur (°C)",
+          "outside_temp_on": "Einschalttemperatur (°C)",
+          "outside_temp_off": "Ausschalttemperatur (°C)",
+          "temp_averaging_hours": "Mittelungszeit (h)",
+          "p_gain": "P-Anteil",
+          "i_gain": "I-Anteil",
+          "pump_start_delay": "Pumpen Start Verzögerung (s)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "select": {
+      "operating_mode": {
+        "name": "Betriebsmodus",
+        "state": {
+          "auto": "Automatik",
+          "on": "Ein",
+          "off": "Aus"
+        }
+      }
+    },
+    "sensor": {
+      "supply_temp": {
+        "name": "Vorlauftemperatur"
+      },
+      "return_temp": {
+        "name": "Rücklauftemperatur"
+      },
+      "outside_temp": {
+        "name": "Außentemperatur"
+      },
+      "outside_temp_avg": {
+        "name": "Außentemperatur (gemittelt)"
+      },
+      "supply_temp_setpoint": {
+        "name": "Vorlauf Sollwert"
+      },
+      "mixing_valve_position": {
+        "name": "Mischventil Position"
+      },
+      "controller_output": {
+        "name": "Reglerausgang"
+      },
+      "error_signal": {
+        "name": "Regelabweichung"
+      }
+    },
+    "number": {
+      "supply_temp_input": {
+        "name": "Vorlauftemperatur Eingabe"
+      },
+      "return_temp_input": {
+        "name": "Rücklauftemperatur Eingabe"
+      },
+      "outside_temp_input": {
+        "name": "Außentemperatur Eingabe"
+      },
+      "min_supply_temp": {
+        "name": "Min. Vorlauftemperatur"
+      },
+      "max_supply_temp": {
+        "name": "Max. Vorlauftemperatur"
+      },
+      "outside_temp_on": {
+        "name": "Einschalttemperatur"
+      },
+      "outside_temp_off": {
+        "name": "Ausschalttemperatur"
+      },
+      "temp_averaging_hours": {
+        "name": "Mittelungszeit"
+      },
+      "p_gain": {
+        "name": "P-Anteil"
+      },
+      "i_gain": {
+        "name": "I-Anteil"
+      },
+      "pump_start_delay": {
+        "name": "Pumpen Start Verzögerung"
+      }
+    },
+    "binary_sensor": {
+      "system_active": {
+        "name": "System aktiv"
+      },
+      "pump_command": {
+        "name": "Pumpe Befehl"
+      },
+      "pump_running": {
+        "name": "Pumpe läuft"
+      },
+      "pump_fault": {
+        "name": "Pumpenstörung"
+      },
+      "safety_limiter": {
+        "name": "Sicherheitstemperaturbegrenzer"
+      },
+      "fault": {
+        "name": "Störung"
+      }
+    },
+    "switch": {
+      "enabled": {
+        "name": "Freigabe"
+      }
+    },
+    "text": {
+      "supply_temp_entity": {
+        "name": "Vorlauftemperatur Entity"
+      },
+      "return_temp_entity": {
+        "name": "Rücklauftemperatur Entity"
+      },
+      "outside_temp_entity": {
+        "name": "Außentemperatur Entity"
+      },
+      "pump_feedback_entity": {
+        "name": "Pumpen Rückmeldung Entity"
+      },
+      "pump_fault_entity": {
+        "name": "Pumpenstörung Entity"
+      },
+      "safety_limiter_entity": {
+        "name": "Sicherheitstemperaturbegrenzer Entity"
+      },
+      "pump_output_entity": {
+        "name": "Pumpen Ausgang Entity"
+      },
+      "valve_open_output_entity": {
+        "name": "Ventil AUF Ausgang Entity"
+      },
+      "valve_close_output_entity": {
+        "name": "Ventil ZU Ausgang Entity"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "domain": "gacontrol_hvac",
+  "name": "Gacontrol HVAC",
+  "version": "1.0.0",
+  "documentation": "https://github.com/Gacontrol/GacontrolHVAC",
+  "issue_tracker": "https://github.com/Gacontrol/GacontrolHVAC/issues",
+  "requirements": [],
+  "codeowners": ["@gacontrol"],
+  "config_flow": true,
+  "iot_class": "local_polling",
+  "integration_type": "device"
+}
